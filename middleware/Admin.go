@@ -60,7 +60,7 @@ func AdminMiddleware(c *gin.Context) {
 		return
 	}
 
-	if float64(time.Now().Unix()) > claims["exp"].(float64) {
+	if float64(time.Now().Unix()) > claims["expired"].(float64) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Token kadaluarsa"})
 		c.AbortWithStatus(http.StatusUnauthorized)
 		return

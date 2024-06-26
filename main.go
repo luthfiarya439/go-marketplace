@@ -29,9 +29,7 @@ func main() {
 	adminRoute := router.Group("/api/admin")
 	adminRoute.Use(middleware.AdminMiddleware)
 	{
-		router.GET("ping", func(c *gin.Context) {
-			c.JSON(http.StatusOK, gin.H{"message": "pong"})
-		})
+		adminRoute.GET("ping", controllers.GetProfile)
 	}
 
 	port := os.Getenv("PORT")

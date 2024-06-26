@@ -133,3 +133,14 @@ func Register(c *gin.Context) {
 
 	c.JSON(201, response)
 }
+
+func GetProfile(c *gin.Context) {
+	user, _ := c.Get("currentUser")
+
+	response := gin.H{
+		"status":  "success",
+		"message": "Berhasil ambil data user",
+		"data":    user,
+	}
+	c.JSON(200, response)
+}

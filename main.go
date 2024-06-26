@@ -38,6 +38,12 @@ func main() {
 		adminRoute.PUT("categories/:id", controllers.UpdateCategory)
 		adminRoute.DELETE("categories/:id", controllers.DeleteCategory)
 
+		// products route
+		adminRoute.GET("products", controllers.IndexProduct)
+		adminRoute.GET("products/:id", controllers.ShowProduct)
+		adminRoute.POST("products", controllers.CreateProduct)
+		adminRoute.PUT("products/:id", controllers.UpdateProduct)
+		adminRoute.DELETE("products/:id", controllers.DeleteProduct)
 	}
 
 	port := os.Getenv("PORT")

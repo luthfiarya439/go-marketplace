@@ -70,3 +70,66 @@ func Authenticate(c *gin.Context) {
 
 	c.JSON(200, response)
 }
+
+func Register(c *gin.Context) {
+
+	var input struct {
+		Name     string `json:"name" binding:"required"`
+		Email    string `json:"email" binding:"required"`
+		Password string `json:"password" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		response := gin.H{
+			"status":  500,
+			"message": "Error, " + err.Error(),
+		}
+		c.JSON(500, response)
+		return
+	}
+
+	var user models.User
+
+	if err := config.DB.Model(&user).Where("email = ?", input.Email).First(&user).RowsAffected; err == 1 {
+		response := gin.H{
+			"status":  500,
+			"message": "Email sudah digunakan",
+		}
+		c.JSON(500, response)
+		return
+	}
+
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+
+	if err != nil {
+		response := gin.H{
+			"status":  500,
+			"message": "Gagal",
+		}
+		c.JSON(500, response)
+		return
+	}
+
+	user = models.User{
+		Name:     input.Name,
+		Email:    input.Email,
+		Password: string(passwordHash),
+		Role:     "user",
+	}
+
+	if err := config.DB.Create(&user).Error; err != nil {
+		response := gin.H{
+			"status":  500,
+			"message": "Gagal",
+		}
+		c.JSON(500, response)
+		return
+	}
+
+	response := gin.H{
+		"status":  201,
+		"message": "Berhasil membuat akun",
+	}
+
+	c.JSON(201, response)
+}

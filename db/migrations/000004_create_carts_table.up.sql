@@ -5,7 +5,7 @@ CREATE TABLE carts (
     quantity bigint NOT NULL,
     FOREIGN KEY (product_id) REFERENCES products(id)
     ON DELETE CASCADE
-    ON UPDATE CASCADE
+    ON UPDATE CASCADE,
     FOREIGN KEY(user_id) REFERENCES users(id)
     ON DELETE CASCADE
     ON UPDATE CASCADE

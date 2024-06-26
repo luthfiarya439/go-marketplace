@@ -26,6 +26,7 @@ func main() {
 	authRoute.POST("login", controllers.Authenticate)
 	authRoute.POST("register", controllers.Register)
 
+	// admin route
 	adminRoute := router.Group("/api/admin")
 	adminRoute.Use(middleware.AdminMiddleware)
 	{
@@ -44,6 +45,21 @@ func main() {
 		adminRoute.POST("products", controllers.CreateProduct)
 		adminRoute.PUT("products/:id", controllers.UpdateProduct)
 		adminRoute.DELETE("products/:id", controllers.DeleteProduct)
+	}
+
+	// user route
+	userRoute := router.Group("api/user")
+	userRoute.Use(middleware.UserMiddleware)
+	{
+		userRoute.GET("ping", controllers.GetProfile)
+
+		// categories route
+		userRoute.GET("categories", controllers.IndexCategory)
+		userRoute.GET("categories/:id", controllers.ShowCategory)
+
+		// products route
+		userRoute.GET("products", controllers.IndexProduct)
+		userRoute.GET("products/:id", controllers.ShowProduct)
 	}
 
 	port := os.Getenv("PORT")

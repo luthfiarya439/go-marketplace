@@ -30,6 +30,14 @@ func main() {
 	adminRoute.Use(middleware.AdminMiddleware)
 	{
 		adminRoute.GET("ping", controllers.GetProfile)
+
+		// categories route
+		adminRoute.GET("categories", controllers.IndexCategory)
+		adminRoute.GET("categories/:id", controllers.ShowCategory)
+		adminRoute.POST("categories", controllers.CreateCategory)
+		adminRoute.PUT("categories/:id", controllers.UpdateCategory)
+		adminRoute.DELETE("categories/:id", controllers.DeleteCategory)
+
 	}
 
 	port := os.Getenv("PORT")

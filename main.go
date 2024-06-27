@@ -67,6 +67,9 @@ func main() {
 		userRoute.POST("carts", controllers.CreateCart)
 		userRoute.DELETE("carts/:id", controllers.DeleteCart)
 
+		// transaction route
+		userRoute.GET("transactions", controllers.IndexTransaction)
+		userRoute.GET("transactions/:id", controllers.ShowTransaction)
 	}
 
 	port := os.Getenv("PORT")

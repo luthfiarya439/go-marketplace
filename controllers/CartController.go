@@ -2,9 +2,12 @@ package controllers
 
 import (
 	"go-marketplace/config"
+	"go-marketplace/helpers"
 	"go-marketplace/models"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type results struct {
@@ -141,4 +144,80 @@ func DeleteCart(c *gin.Context) {
 	}
 
 	c.JSON(200, response)
+}
+
+func CheckoutCart(c *gin.Context) {
+	var carts []models.Cart
+	// var products []models.Product
+	currentUser, _ := c.Get("currentUser")
+	user, _ := currentUser.(models.User)
+
+	if err := config.DB.Model(&carts).Where("user_id = ?", user.ID).First(&carts).Error; err != nil {
+		response := gin.H{
+			"status":  404,
+			"message": "Data tidak ditemukan",
+		}
+
+		c.JSON(404, response)
+		return
+	}
+
+	err := MakeTransaction(config.DB, carts, user)
+
+	if err != nil {
+		c.JSON(500, err.Error())
+		return
+	}
+
+	response := gin.H{
+		"status":  201,
+		"message": "Berhasil melakukan checkout cart",
+	}
+
+	c.JSON(201, response)
+}
+
+func MakeTransaction(db *gorm.DB, carts []models.Cart, user models.User) error {
+	return db.Transaction(func(tx *gorm.DB) error {
+		productIds := helpers.GetProductId(carts)
+		checkoutProducts := helpers.GetCheckoutProduct(carts)
+		var txProduct []models.Product
+		var txCart models.Cart
+		var txTransactionDetails models.TransactionDetail
+		if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).Where("id IN ?", productIds).Find(&txProduct).Error; err != nil {
+			return err
+		}
+
+		if err := helpers.CheckProductQuantity(txProduct, checkoutProducts); err != nil {
+			return err
+		}
+		updateRawQuery := helpers.MakeUpdateStatement(checkoutProducts)
+		if err := tx.Exec(updateRawQuery).Error; err != nil {
+			return err
+		}
+
+		totalTransaction := helpers.CalculateTotalTransaction(txProduct, checkoutProducts)
+
+		createTransaction := models.Transaction{
+			Total:           uint(totalTransaction),
+			TransactionCode: helpers.MakeTransactionCode(15),
+			UserId:          user.ID,
+		}
+
+		if err := tx.Model(&createTransaction).Create(&createTransaction).Error; err != nil {
+			return err
+		}
+
+		transactionDetails := helpers.MakeTransactionData(txProduct, createTransaction, checkoutProducts)
+
+		if err := tx.Model(&txTransactionDetails).Create(&transactionDetails).Error; err != nil {
+			return err
+		}
+
+		if err := tx.Model(&txCart).Where("user_id = ?", user.ID).Delete(&txCart).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
 }

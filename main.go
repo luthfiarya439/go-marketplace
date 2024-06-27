@@ -70,6 +70,9 @@ func main() {
 		// transaction route
 		userRoute.GET("transactions", controllers.IndexTransaction)
 		userRoute.GET("transactions/:id", controllers.ShowTransaction)
+
+		// checkout cart
+		userRoute.POST("checkout", controllers.CheckoutCart)
 	}
 
 	port := os.Getenv("PORT")

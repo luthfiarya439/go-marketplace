@@ -4,6 +4,8 @@ import (
 	"go-marketplace/config"
 	"go-marketplace/controllers"
 	"go-marketplace/middleware"
+	"go-marketplace/seeder"
+	"log"
 	"net/http"
 	"os"
 
@@ -13,6 +15,13 @@ import (
 func init() {
 	config.LoadEnv()
 	config.ConnectDatabase()
+
+	err := seeder.AdminSeeder()
+	if err != nil {
+		log.Printf("Gagal seeder admin")
+	} else {
+		log.Printf("Seeder admin sukses")
+	}
 }
 
 func main() {

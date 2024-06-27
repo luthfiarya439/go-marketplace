@@ -1,13 +1,6 @@
 version: '3.8'
 
 services:
-  app:
-    build: .
-    ports:
-      - "8080:8080"
-    depends_on:
-      - mysql
-
   mysql:
     image: mysql:8.0
     restart: always
@@ -18,8 +11,24 @@ services:
       MYSQL_PASSWORD: password
     ports:
       - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     volumes:
       - db_data:/var/lib/mysql
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    depends_on:
+      mysql:
+        condition: service_healthy
+    command: ["sh", "-c",  "migrate -path /app/db/migrations -database 'mysql://root:password@tcp(mysql:3306)/go-marketplace' up && ./main"]
 
 volumes:
   db_data:

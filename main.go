@@ -7,7 +7,6 @@ import (
 	"go-marketplace/seeder"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/gin-gonic/gin"
 )
@@ -84,6 +83,5 @@ func main() {
 		userRoute.POST("checkout", controllers.CheckoutCart)
 	}
 
-	port := os.Getenv("PORT")
-	router.Run(":" + port)
+	router.Run(":8080")
 }

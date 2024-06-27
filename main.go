@@ -60,6 +60,13 @@ func main() {
 		// products route
 		userRoute.GET("products", controllers.IndexProduct)
 		userRoute.GET("products/:id", controllers.ShowProduct)
+
+		// cart route
+		userRoute.GET("carts", controllers.IndexCart)
+		userRoute.GET("carts/:id", controllers.ShowCart)
+		userRoute.POST("carts", controllers.CreateCart)
+		userRoute.DELETE("carts/:id", controllers.DeleteCart)
+
 	}
 
 	port := os.Getenv("PORT")

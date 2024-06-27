@@ -44,7 +44,7 @@ func ShowTransaction(c *gin.Context) {
 	var transaction models.Transaction
 	var transactionDetail []models.TransactionDetail
 
-	if err := config.DB.Model(&transaction).Where("id = ?", c.Param("id")).Where("user_id = ?", user.ID).First(&transaction).Error; err != nil {
+	if err := config.DB.Model(&transaction).Where("transaction_code = ?", c.Param("transactionCode")).Where("user_id = ?", user.ID).First(&transaction).Error; err != nil {
 		response := gin.H{
 			"status":  404,
 			"message": "Data tidak ditemukan",
@@ -54,7 +54,7 @@ func ShowTransaction(c *gin.Context) {
 		return
 	}
 
-	if err := config.DB.Model(&transactionDetail).Where("transaction_id = ?", c.Param("id")).Find(&transactionDetail).Error; err != nil {
+	if err := config.DB.Model(&transactionDetail).Where("transaction_id = ?", transaction.ID).Find(&transactionDetail).Error; err != nil {
 		response := gin.H{
 			"status":  404,
 			"message": "Data tidak ditemukan",

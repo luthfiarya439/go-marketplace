@@ -1,16 +1,21 @@
-If you want to run this project without docker
-1. make ```.env``` file from ```.env-example``` file
-2. Go to this project directory
-3. ```go mod download```
-4. Install golang-migrate
-   1. ```go install -tags 'mysql' github.com/golang-migrate/migrate/v4/cmd/migrate@latest```
-5. Run migration
-   1. ```migrate -database "mysql://your_mysql_user:your_mysql_password@tcp(your_mysql_address:your_mysql_port)/go-marketplace" -path db/migrations/ up```
-6. Run
-   1. ```go run main.go```
+Jika ingin menjalankan tanpa docker
+1. Buat ```.env``` file dari ```.env.example``` file
+2. Masuk ke directory project
+3. Jalankan ```go mod download```
+4. Install golang-migrate ```go install -tags 'mysql' github.com/golang-migrate/migrate/v4/cmd/migrate@latest```
+5. Lakukan migration ```migrate -database "mysql://YOUR_MYSQL_USER:YOUR_MYSQL_PASSWORD@tcp(YOUR_MYSQL_ADDRESS:YOUR_MYSQL_PORT)/YOUR_DATABASE" -path db/migrations/ up```
+6. Jalankan perintah ```go run main.go```
   
-If you want to run this project with docker
-1. make ```.env``` file from ```.env-example``` file
-2. Run ```docker-compose up --build```
+Jika ingin menjalankan dengan docker
+1. Buat ```.env``` file dari ```.env.example``` file
+2. Jalankan perintah ```docker-compose up --build```
 
-More information about this project visit : https://docs.google.com/document/d/1CTi-PGJ9yxbF_XM1jLXKZnaxJlX3cE7KcgL_iuKS9F4/edit?usp=sharing
+Informasi:
+1. Default admin account
+   1. Email : admin@mail.com password : admin@mail.com
+2. Pada Postman untuk folder User, hanya menampilkan data khusus user yang sudah terautentikasi dan tidak akan berpengaruh terhadap user yang lain
+3. Untuk request “detail”, “update”, dan “delete” (kecuali untuk request detail transaction) url parameter menggunakan id
+   1. Contoh : http://localhost:8080/api/admin/categories/1
+4. Untuk request “detail” pada transaction url parameter menggunakan transaction_code
+   1. Contoh : http://localhost:8080/api/admin/transactions/qwioeu1234
+

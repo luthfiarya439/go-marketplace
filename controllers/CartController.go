@@ -152,10 +152,20 @@ func CheckoutCart(c *gin.Context) {
 	currentUser, _ := c.Get("currentUser")
 	user, _ := currentUser.(models.User)
 
-	if err := config.DB.Model(&carts).Where("user_id = ?", user.ID).First(&carts).Error; err != nil {
+	if err := config.DB.Model(&carts).Where("user_id = ?", user.ID).Find(&carts).Error; err != nil {
+		response := gin.H{
+			"status":  500,
+			"message": "Error: " + err.Error(),
+		}
+
+		c.JSON(500, response)
+		return
+	}
+
+	if len(carts) == 0 {
 		response := gin.H{
 			"status":  404,
-			"message": "Data tidak ditemukan",
+			"message": "Data cart tidak ada",
 		}
 
 		c.JSON(404, response)

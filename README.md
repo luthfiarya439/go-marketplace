@@ -19,3 +19,6 @@ Informasi:
 4. Untuk request “detail” pada transaction url parameter menggunakan transaction_code
    1. Contoh : http://localhost:8080/api/admin/transactions/qwioeu1234
 
+ERD
+
+![go-marketplace](https://github.com/luthfiarya439/go-marketplace/assets/108350007/6f9afab1-90d7-473b-afc8-45cadd2024eb)
